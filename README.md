@@ -53,6 +53,12 @@ docker run -p 80:8080 -e SWAGGER_JSON=/schema.yml -v ${PWD}/schema.yml:/schema.y
 
 Для авторизации используется JWT
 
+Все авторизованные запросы подписываются HTTP заголовком:
+
+```HTTP
+Authorization: Bearer <token>
+```
+
 ```python
  # вот этот декоратор используется в качестве middleware 
  # для валидации JWT токена и получения данных пользователя
