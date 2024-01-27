@@ -29,6 +29,7 @@ source venv/bin/activate
 # run migrations
 python manage.py migrate
 
+# start application
 python manage.py runserver
 
 # generate openapi
