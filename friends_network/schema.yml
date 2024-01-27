@@ -199,6 +199,19 @@ components:
       - subscriber_id
       - subscriber_username
       - subscription_id
+    OutgoingFriendInviteEntity:
+      type: object
+      properties:
+        subscription_id:
+          type: integer
+        subscribed_id:
+          type: integer
+        subscribed_username:
+          type: string
+      required:
+      - subscribed_id
+      - subscribed_username
+      - subscription_id
     PatchedMarkAsViewedRequest:
       type: object
       properties:
@@ -265,12 +278,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SubscriberEntity'
+        friends:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriberEntity'
         incoming_friend_requests:
           type: array
           items:
             $ref: '#/components/schemas/IncomingFriendInviteEntity'
+        outgoing_friend_requests:
+          type: array
+          items:
+            $ref: '#/components/schemas/OutgoingFriendInviteEntity'
       required:
+      - friends
       - incoming_friend_requests
+      - outgoing_friend_requests
       - subscribers
       - subscriptions
     UnsubscribeRequest:
