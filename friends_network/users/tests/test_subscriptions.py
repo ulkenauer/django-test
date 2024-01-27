@@ -38,6 +38,11 @@ class SubscriptionsTestCase(TestCase):
 
         subscriber_subs = self.service.list_user_subscriptions(test_user.pk)
         subscribed_subs = self.service.list_user_subscriptions(test_user_2.pk)
+        status = self.service.check_subscription_status(
+            user_id=test_user.pk,
+            username=test_user_2.username,
+        )
+        self.assertEqual(status, "outgoing_request_sent")
 
         self.assertEqual(len(subscriber_subs.subscriptions), 1)
         self.assertEqual(len(subscriber_subs.subscribers), 0)
@@ -72,6 +77,16 @@ class SubscriptionsTestCase(TestCase):
         self.assertEqual(len(subscribed_subs.subscribers), 1)
         self.assertEqual(len(subscribed_subs.friends), 0)
         self.assertEqual(len(subscribed_subs.incoming_friend_requests), 1)
+        status = self.service.check_subscription_status(
+            user_id=test_user.pk,
+            username=test_user_2.username,
+        )
+        status_2 = self.service.check_subscription_status(
+            user_id=test_user_2.pk,
+            username=test_user.username,
+        )
+        self.assertEqual(status, "outgoing_request_sent")
+        self.assertEqual(status_2, "ingoing_request_pending")
 
         self.service.mark_subscription_as_viewed(
             recipient_id=test_user_2.pk,
@@ -89,6 +104,15 @@ class SubscriptionsTestCase(TestCase):
         self.assertEqual(len(subscribed_subs.subscribers), 1)
         self.assertEqual(len(subscribed_subs.friends), 0)
         self.assertEqual(len(subscribed_subs.incoming_friend_requests), 0)
+        status = self.service.check_subscription_status(
+            user_id=test_user.pk,
+            username=test_user_2.username,
+        )
+        status_2 = self.service.check_subscription_status(
+            user_id=test_user_2.pk,
+            username=test_user.username,
+        )
+        self.assertEqual(status_2, "subscriber")
 
     def test_user_can_accept_friend_request(self):
         test_user = User.objects.create_user("username", None, "password")
@@ -123,6 +147,17 @@ class SubscriptionsTestCase(TestCase):
 
         subscriber_subs = self.service.list_user_subscriptions(test_user.pk)
         subscribed_subs = self.service.list_user_subscriptions(test_user_2.pk)
+
+        status = self.service.check_subscription_status(
+            user_id=test_user.pk,
+            username=test_user_2.username,
+        )
+        status_2 = self.service.check_subscription_status(
+            user_id=test_user_2.pk,
+            username=test_user.username,
+        )
+        self.assertEqual(status, "friend")
+        self.assertEqual(status_2, "friend")
 
         self.assertEqual(len(subscriber_subs.subscriptions), 1)
         self.assertEqual(len(subscriber_subs.subscribers), 1)
@@ -250,6 +285,17 @@ class SubscriptionsTestCase(TestCase):
         self.assertEqual(len(subscribed_subs.subscribers), 0)
         self.assertEqual(len(subscribed_subs.friends), 0)
         self.assertEqual(len(subscribed_subs.incoming_friend_requests), 0)
+
+        status = self.service.check_subscription_status(
+            user_id=test_user.pk,
+            username=test_user_2.username,
+        )
+        status_2 = self.service.check_subscription_status(
+            user_id=test_user_2.pk,
+            username=test_user.username,
+        )
+        self.assertEqual(status, "none")
+        self.assertEqual(status_2, "none")
 
     def test_user_cant_unsubscribe_without_subscription(self):
         test_user = User.objects.create_user("username", None, "password")

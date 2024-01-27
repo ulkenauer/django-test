@@ -239,3 +239,22 @@ class SubscriptionsViewSet(viewsets.ModelViewSet):
             return ex.to_json_response()
 
         return HttpResponse(status=204)
+
+    @jwt_auth_check
+    @extend_schema(
+        request=UnsubscribeRequestSerializer,
+        responses={200: None, 401: None},
+    )
+    @action(detail=False, methods=["get"])
+    def check_status(self, request: Request):
+        service = self.service
+
+        username = request.query_params["username"]
+
+        try:
+            status = service.check_subscription_status(
+                user_id=request.user.pk, username=username
+            )
+            return JsonResponse({"status": status}, status=200)
+        except CustomException as ex:
+            return ex.to_json_response()

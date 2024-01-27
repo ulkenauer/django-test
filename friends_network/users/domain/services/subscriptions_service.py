@@ -84,6 +84,47 @@ class SubscriptionsService:
         except User.DoesNotExist:
             raise ObjectNotFound(code="user_not_found", msg="")
 
+    def check_subscription_status(self, user_id: int, username: str) -> str:
+        subscribed = User.objects.get(username=username)
+
+        subscription = None
+        reverse_sub = None
+
+        if subscribed.pk == user_id:
+            raise ClientError("", code="cant_check_subscription_to_self")
+
+        try:
+            subscription = Subscription.objects.get(
+                subscribed_id=subscribed.id,
+                subscriber_id=user_id,
+            )
+        except Subscription.DoesNotExist:
+            ...
+
+        try:
+            reverse_sub = Subscription.objects.get(
+                subscribed_id=user_id,
+                subscriber_id=subscribed.id,
+            )
+        except Subscription.DoesNotExist:
+            ...
+
+        if subscription is not None:
+            if reverse_sub is not None:
+                return "friend"
+            if subscription.status == SubscriptionStatus.new.value:
+                return "outgoing_request_sent"
+            else:
+                return "subscribed_by_me"
+
+        if reverse_sub is not None:
+            if reverse_sub.status == SubscriptionStatus.new.value:
+                return "ingoing_request_pending"
+            else:
+                return "subscriber"
+
+        return "none"
+
     def list_user_subscriptions(self, user_id: int):
         my_subscriptions = (
             Subscription.objects.filter(
