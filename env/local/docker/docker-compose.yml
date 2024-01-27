@@ -1,0 +1,35 @@
+version: '2.4'
+
+services:
+  # friends_network_web:
+  #   build:
+  #     context: ../../../
+  #     dockerfile: ./env/local/docker/python/Dockerfile
+  #   container_name: friends_network_web
+  #   depends_on:
+  #     friends_network_db:
+  #       condition: service_healthy
+  #   env_file:
+  #     - ../../../.env
+  #   ports:
+  #     - 8000:8000
+  #   volumes:
+  #     - ../../../friends_network:/project
+  friends_network_db:
+    image: postgres:15
+    container_name: friends_network_db
+    ports:
+      - 5432:5432
+    env_file:
+      - ../../../.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres-data-friends:/var/lib/postgresql/data
+
+volumes:
+  postgres-data-friends:
+

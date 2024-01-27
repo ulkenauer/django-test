@@ -1,0 +1,290 @@
+openapi: 3.0.3
+info:
+  title: Your Project API
+  version: 1.0.0
+  description: Your project description
+paths:
+  /subscriptions/:
+    get:
+      operationId: subscriptions_list
+      tags:
+      - subscriptions
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubscriptionsListResponse'
+          description: ''
+        '401':
+          description: No response body
+    post:
+      operationId: subscriptions_create
+      tags:
+      - subscriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscribeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SubscribeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SubscribeRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+        '400':
+          description: No response body
+        '401':
+          description: No response body
+        '404':
+          description: No response body
+  /subscriptions/mark_as_viewed/:
+    patch:
+      operationId: subscriptions_mark_as_viewed_partial_update
+      tags:
+      - subscriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedMarkAsViewedRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedMarkAsViewedRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedMarkAsViewedRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+        '401':
+          description: No response body
+  /subscriptions/unsubscribe/:
+    post:
+      operationId: subscriptions_unsubscribe_create
+      tags:
+      - subscriptions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnsubscribeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UnsubscribeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UnsubscribeRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+        '401':
+          description: No response body
+  /users/auth/:
+    post:
+      operationId: users_auth_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auth'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Auth'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Auth'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+        '401':
+          description: No response body
+  /users/profile/:
+    get:
+      operationId: users_profile_retrieve
+      tags:
+      - users
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: ''
+        '401':
+          description: No response body
+  /users/register/:
+    post:
+      operationId: users_register_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+        '401':
+          description: No response body
+components:
+  schemas:
+    Auth:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    IncomingFriendInviteEntity:
+      type: object
+      properties:
+        subscription_id:
+          type: integer
+        subscriber_id:
+          type: integer
+        subscriber_username:
+          type: string
+      required:
+      - subscriber_id
+      - subscriber_username
+      - subscription_id
+    PatchedMarkAsViewedRequest:
+      type: object
+      properties:
+        username:
+          type: string
+    Profile:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+      - username
+    Register:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    SubscribeRequest:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+      - username
+    SubscriberEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+        subscription_id:
+          type: integer
+        username:
+          type: string
+      required:
+      - id
+      - subscription_id
+      - username
+    SubscriptionEntity:
+      type: object
+      properties:
+        id:
+          type: integer
+        subscribed_id:
+          type: integer
+        subscribed_username:
+          type: string
+      required:
+      - id
+      - subscribed_id
+      - subscribed_username
+    SubscriptionsListResponse:
+      type: object
+      properties:
+        subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionEntity'
+        subscribers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriberEntity'
+        incoming_friend_requests:
+          type: array
+          items:
+            $ref: '#/components/schemas/IncomingFriendInviteEntity'
+      required:
+      - incoming_friend_requests
+      - subscribers
+      - subscriptions
+    UnsubscribeRequest:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+      - username
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
