@@ -53,6 +53,26 @@ paths:
           description: No response body
         '404':
           description: No response body
+  /subscriptions/check_status/:
+    get:
+      operationId: subscriptions_check_status_retrieve
+      parameters:
+      - in: query
+        name: username
+        schema:
+          type: string
+        description: username for status check
+      tags:
+      - subscriptions
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+        '401':
+          description: No response body
   /subscriptions/mark_as_viewed/:
     patch:
       operationId: subscriptions_mark_as_viewed_partial_update

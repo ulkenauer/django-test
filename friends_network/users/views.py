@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from rest_framework.request import Request
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from django.db.utils import IntegrityError
 from drf_spectacular.utils import extend_schema_view
 
@@ -22,8 +22,6 @@ from users.utils.extend_schema_with_no_defaults import (
     extend_schema_view_no_defaults,
 )
 from users.utils.jwt_auth_check import jwt_auth_check
-
-from users.models import Subscription
 
 from rest_framework import serializers
 
@@ -243,6 +241,14 @@ class SubscriptionsViewSet(viewsets.ModelViewSet):
     @jwt_auth_check
     @extend_schema(
         request=UnsubscribeRequestSerializer,
+        parameters=[
+            OpenApiParameter(
+                name="username",
+                description="username for status check",
+                required=True,
+                type=str,
+            ),
+        ],
         responses={200: None, 401: None},
     )
     @action(detail=False, methods=["get"])
