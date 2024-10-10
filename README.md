@@ -26,8 +26,9 @@ docker compose up -d --build
 
 ```bash
 python3.10 -m venv venv
-source venv/bin/activate
-source .env
+source .venv/bin/activate
+# source .env
+set -a && source .env && set +a
 
 # run migrations
 python manage.py migrate

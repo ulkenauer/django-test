@@ -13,6 +13,7 @@ services:
       - ../../../.env
     ports:
       - 8000:8000
+    profiles: [backend]
     volumes:
       - ../../../friends_network:/project
   friends_network_db:
